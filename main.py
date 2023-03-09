@@ -36,13 +36,11 @@ prompt = PromptTemplate(
     template=template,
 )
 
-def load_LLM():
+def load_LLM(openai_api_key):
     """Logic for loading the chain you want to use should go here."""
     # Make sure your openai_api_key is set as an environment variable
-    llm = OpenAI(temperature=.7)
+    llm = OpenAI(temperature=.7, openai_api_key=openai_api_key)
     return llm
-
-llm = load_LLM()
 
 st.set_page_config(page_title="Globalize Email", page_icon=":robot:")
 st.header("Globalize Text")
@@ -60,7 +58,11 @@ with col2:
 
 st.markdown("## Enter Your Email To Convert")
 
+def get_api_key():
+    input_text = st.text_input(label="OpenAI API Key ",  placeholder="Ex: sk-2twmA8tfCb8un4...", key="openai_api_key_input")
+    return input_text
 
+openai_api_key = get_api_key()
 
 col1, col2 = st.columns(2)
 with col1:
@@ -92,9 +94,14 @@ st.button("*See An Example*", type='secondary', help="Click to see an example of
 st.markdown("### Your Converted Email:")
 
 if email_input:
+    if not openai_api_key:
+        st.warning('Please insert OpenAI API Key. Instructions [here](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)', icon="⚠️")
+        st.stop()
+
+    llm = load_LLM(openai_api_key=openai_api_key)
+
     prompt_with_email = prompt.format(tone=option_tone, dialect=option_dialect, email=email_input)
 
     formatted_email = llm(prompt_with_email)
 
     st.write(formatted_email)
-    
