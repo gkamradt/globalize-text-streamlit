@@ -47,12 +47,12 @@ st.set_page_config(page_title="Better Grammar Ally", layout="wide")
 st.markdown("# Better thoughts with AI ✨")
 
 with st.container():
-   st.markdown("Made by Prithvi")
+   st.markdown("##### Improve your thoughts, messages, and emails by 10X with OpenAI. \n\n Made by [Prithvi](https://twitter.com/iprithvitharun).")
 
-st.markdown("### You thoughts")
+st.markdown("## Your thoughts")
 
 def get_api_key():
-    input_text = st.text_input(label="OpenAI API Key ",  placeholder="Ex: sk-2twmA8tfCb8un4...", key="openai_api_key_input")
+    input_text = st.text_input(label="OpenAI API Key ", key="openai_api_key_input")
     return input_text
 
 openai_api_key = get_api_key()
@@ -60,16 +60,16 @@ openai_api_key = get_api_key()
 col1, col2 = st.columns(2)
 with col1:
     option_tone = st.selectbox(
-        'Which tone would you like your email to have?',
-        ('Formal', 'Informal'))
+        'Tone',
+        ('Formal', 'Casual', 'Sad', 'Funny'))
     
 with col2:
     option_dialect = st.selectbox(
-        'Which English Dialect would you like?',
-        ('American', 'British'))
+        'Dialect',
+        ('American', 'British', 'Indian'))
 
 def get_text():
-    input_text = st.text_area(label="Email Input", label_visibility='collapsed', placeholder="Your Email...", key="email_input")
+    input_text = st.text_area(label="Your thoughts Input", label_visibility='collapsed', placeholder='Enter your thoughts here.', key="email_input")
     return input_text
 
 email_input = get_text()
@@ -82,7 +82,7 @@ def update_text_with_example():
     print ("in updated")
     st.session_state.email_input = "Sally I am starts work at yours monday from dave"
 
-st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
+# st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
 
 st.markdown("### Your Converted Email:")
 
