@@ -8,6 +8,8 @@ template = """
     - Properly format the email
     - Convert the input text to a specified tone
     - Convert the input text to a specified dialect
+    - Convert the input text based on the character 
+
 
     Here are some examples different Tones:
     - Formal: We went to Barcelona for the weekend. We have a lot of things to tell you.
@@ -27,12 +29,13 @@ template = """
     TONE: {tone}
     DIALECT: {dialect}
     EMAIL: {email}
+    JOBS: {jobs}
     
     YOUR {dialect} RESPONSE:
 """
 
 prompt = PromptTemplate(
-    input_variables=["tone", "dialect", "email"],
+    input_variables=["tone", "dialect", "jobs", "email"],
     template=template,
 )
 
@@ -49,7 +52,7 @@ st.markdown("# Better thoughts with AI ✨")
 with st.container():
    st.markdown("Improve your thoughts, messages, and emails by 10X with OpenAI. \n\n Made by [Prithvi](https://twitter.com/iprithvitharun).")
 
-st.markdown("## Your thoughts")
+st.markdown("## Your message")
 
 def get_api_key():
     input_text = st.text_input(label="OpenAI API key ", placeholder="sk-XXXXXXXXXXXXXXXXXXX", key="openai_api_key_input")
@@ -57,16 +60,21 @@ def get_api_key():
 
 openai_api_key = get_api_key()
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 with col1:
     option_tone = st.selectbox(
-        'Tone',
+        'Select the tone you want the message to be?',
         ('Formal', 'Casual', 'Sad', 'Funny'))
-    
+
 with col2:
+    option_jobs = st.selectbox(
+        'Character',
+        ('Product Manager', 'UX Writer', 'Designer', 'Developer', 'Law officer'))
+
+with col3:
     option_dialect = st.selectbox(
         'Dialect',
-        ('American', 'British', 'Indian'))        
+        ('American English', 'British English'))                        
 
 def get_text():
     input_text = st.text_area(label="Your thoughts", label_visibility='visible', placeholder='Enter your thoughts here.', key="email_input")
@@ -86,7 +94,7 @@ if len(email_input.split(" ")) > 700:
 
 # st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
 
-st.markdown("### Your improved thoughts 👇")
+st.markdown("### Improved message:")
 
 if email_input:
     if not openai_api_key:
@@ -95,7 +103,7 @@ if email_input:
 
     llm = load_LLM(openai_api_key=openai_api_key)
 
-    prompt_with_email = prompt.format(tone=option_tone, dialect=option_dialect, email=email_input)
+    prompt_with_email = prompt.format(tone=option_tone, jobs=option_jobs, dialect=option_dialect, email=email_input)
     
     formatted_email = llm(prompt_with_email)
 
