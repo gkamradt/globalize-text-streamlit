@@ -42,17 +42,17 @@ def load_LLM(openai_api_key):
     llm = OpenAI(temperature=.7, openai_api_key=openai_api_key)
     return llm
 
-st.set_page_config(page_title="Better Grammar Ally", layout="wide")
+st.set_page_config(page_title='Better Grammar Ally', layout="wide", page_icon='✍️')
 
 st.markdown("# Better thoughts with AI ✨")
 
 with st.container():
-   st.markdown("##### Improve your thoughts, messages, and emails by 10X with OpenAI. \n\n Made by [Prithvi](https://twitter.com/iprithvitharun).")
+   st.markdown("Improve your thoughts, messages, and emails by 10X with OpenAI. \n\n Made by [Prithvi](https://twitter.com/iprithvitharun).")
 
 st.markdown("## Your thoughts")
 
 def get_api_key():
-    input_text = st.text_input(label="OpenAI API Key ", key="openai_api_key_input")
+    input_text = st.text_input(label="OpenAI API key ", placeholder="sk-XXXXXXXXXXXXXXXXXXX", key="openai_api_key_input")
     return input_text
 
 openai_api_key = get_api_key()
@@ -66,35 +66,37 @@ with col1:
 with col2:
     option_dialect = st.selectbox(
         'Dialect',
-        ('American', 'British', 'Indian'))
+        ('American', 'British', 'Indian'))        
 
 def get_text():
-    input_text = st.text_area(label="Your thoughts Input", label_visibility='collapsed', placeholder='Enter your thoughts here.', key="email_input")
+    input_text = st.text_area(label="Your thoughts", label_visibility='visible', placeholder='Enter your thoughts here.', key="email_input")
     return input_text
 
 email_input = get_text()
 
+
 if len(email_input.split(" ")) > 700:
-    st.write("Please enter a shorter email. The maximum length is 700 words.")
+    st.write("The maximum length is 700 words.")
     st.stop()
 
-def update_text_with_example():
-    print ("in updated")
-    st.session_state.email_input = "Sally I am starts work at yours monday from dave"
+
+# def update_text_with_example():
+#    print ("in updated")
+#    st.session_state.email_input = "Sally I am starts work at yours monday from dave"
 
 # st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
 
-st.markdown("### Your Converted Email:")
+st.markdown("### Your improved thoughts 👇")
 
 if email_input:
     if not openai_api_key:
-        st.warning('Please insert OpenAI API Key. Instructions [here](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key)', icon="⚠️")
+        st.error('Enter your OpenAI API key to continue. [Find API key](https://platform.openai.com/account/api-keys)', icon="⚠️")
         st.stop()
 
     llm = load_LLM(openai_api_key=openai_api_key)
 
     prompt_with_email = prompt.format(tone=option_tone, dialect=option_dialect, email=email_input)
-
+    
     formatted_email = llm(prompt_with_email)
 
     st.write(formatted_email)
