@@ -6,7 +6,7 @@ from langchain.llms import OpenAI
 template = """
     Below is an message that may be poorly worded.
     Your goal is to:
-    - Properly format the message
+    - Improve the meaning of the message, fix grammatical errors, and retain text formatting used
     - Convert the input text to a specified tone
     - Convert the input text from the point of view of the specified character
 
@@ -14,15 +14,16 @@ template = """
     - Formal: We went to Barcelona for the weekend. We have a lot of things to tell you.
     - Casual: Went to Barcelona for the weekend. Lots to tell you.
 
-    Here are some inofrmation about the different characters:
+    Here are some information about the different characters:
     - Technical Writer: As a tech writer, you write technical documentation, manuals, and guides for software, hardware, and technology products.
     - Designer: As a graphic designer, you design graphics and visual materials for various media such as websites, advertisements, and branding. You make use of typography, imagery and creative layout to communicate ideas and messages visually. Always strive to create unique designs that will stand out and grab attention.
     - Product Manager: As a product manager, you oversee the development and marketing of a product, identify customer needs, and work with engineers and designers to create a product roadmap.
     - Marketer: As a marketing expert, you help the user develop marketing strategies and campaigns, conduct market research, and provide branding and advertising advice.
-    - Frontend developer: As a Senior Frontend developer, you will rewrite the input message with your extensive knowledge in Create React App, Vite, yarn, Ant Design, List, Redux Toolkit, createSlice, thunk, axios. You should merge files in single index.js file and nothing else.
-
+    - Frontend developer: As a Senior Frontend developer, you will rewrite the input message with your extensive knowledge in frontend development.
+    - UX Writer: As a UX writer, you have extensive knowledge about the Nielsan Norman group content and will improve messages that will be most effective in grabbing users' attention and encouraging them to learn more about the product.
+    
     Below is the message, tone, and dialect:
-    EMAIL: {email}
+    MESSAGE: {message}
     TONE: {tone}
     CHARACTER: {character}
     
@@ -30,7 +31,7 @@ template = """
 """
 
 prompt = PromptTemplate(
-    input_variables=["tone", "character", "email"],
+    input_variables=["tone", "character", "message"],
     template=template,
 )
 
@@ -65,15 +66,15 @@ with col2:
     option_character = st.selectbox(
         'Character',
 
-        ('Product Manager', 'Technical Writer', 'Designer', 'Marketer', 'Frontend developer'))                   
+        ('Product Manager', 'Technical Writer', 'Designer', 'Marketer', 'Frontend developer', 'UX Writer' ))                   
 def get_text():
-    input_text = st.text_area(label="Your message", label_visibility='visible', placeholder='Enter your thoughts here.', key="email_input")
+    input_text = st.text_area(label="Your message", label_visibility='visible', placeholder='Enter your thoughts here.', key="message_input")
     return input_text
 
-email_input = get_text()
+message_input = get_text()
 
 
-if len(email_input.split(" ")) > 700:
+if len(message_input.split(" ")) > 700:
     st.write("The maximum length is 700 words.")
     st.stop()
 
@@ -86,15 +87,15 @@ if len(email_input.split(" ")) > 700:
 
 st.markdown("### Improved message:")
 
-if email_input:
+if message_input:
     if not openai_api_key:
         st.error('Enter your OpenAI API key to continue. [Find API key](https://platform.openai.com/account/api-keys)', icon="⚠️")
         st.stop()
 
     llm = load_LLM(openai_api_key=openai_api_key)
 
-    prompt_with_email = prompt.format(tone=option_tone, character=option_character, email=email_input)
+    prompt_with_message = prompt.format(tone=option_tone, character=option_character, message=message_input)
     
-    formatted_email = llm(prompt_with_email)
+    formatted_message = llm(prompt_with_message)
 
-    st.code(formatted_email, language="textile")
+    st.write(formatted_message)
