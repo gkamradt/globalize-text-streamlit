@@ -2,26 +2,33 @@ import streamlit as st
 from langchain import PromptTemplate
 from langchain.llms import OpenAI
 
+
 template = """
-I want you to act as an English translator, spelling corrector and improver. 
-
-I will speak to you in any language and you will detect the language, translate it and answer in the corrected and improved version of my text, in English. 
-
-I want you to replace my simplified A0-level words and sentences with more beautiful and elegant, upper level English words and sentences. 
-
-Keep the meaning same, but make them more literary. I want you to only reply the correction, the improvements and nothing else, do not write explanations.
-
-Below is the email, tone, and dialect:
-    TONE: {tone}
-    DIALECT: {dialect}
-    EMAIL: {email}
-    JOBS: {jobs}
+    Below is an message that may be poorly worded.
+    Your goal is to:
+    - Properly format the email
+    - Convert the input text to a specified tone
+    - Convert the input text to a specified dialect
+    Here are some examples different Tones:
+    - Formal: We went to Barcelona for the weekend. We have a lot of things to tell you.
+    - Informal: Went to Barcelona for the weekend. Lots to tell you.  
+    Here are some examples of words in different dialects:
+    - American: French Fries, cotton candy, apartment, garbage, cookie, green thumb, parking lot, pants, windshield
+    - British: chips, candyfloss, flag, rubbish, biscuit, green fingers, car park, trousers, windscreen
+    Example Sentences from each dialect:
+    - American: I headed straight for the produce section to grab some fresh vegetables, like bell peppers and zucchini. After that, I made my way to the meat department to pick up some chicken breasts.
+    - British: Well, I popped down to the local shop just the other day to pick up a few bits and bobs. As I was perusing the aisles, I noticed that they were fresh out of biscuits, which was a bit of a disappointment, as I do love a good cuppa with a biscuit or two.
     
-    YOUR {dialect} RESPONSE:
+    Below is the message, tone, and dialect:
+    EMAIL: {email}
+    TONE: {tone}
+    CHARACTER: {character}
+    
+    YOUR {character} RESPONSE:
 """
 
 prompt = PromptTemplate(
-    input_variables=["tone", "dialect", "jobs", "email"],
+    input_variables=["tone", "character", "email"],
     template=template,
 )
 
@@ -33,34 +40,29 @@ def load_LLM(openai_api_key):
 
 st.set_page_config(page_title='Better Grammar Ally', layout="wide", page_icon='✍️')
 
-st.markdown("# Better thoughts with AI ✨")
+st.markdown("# Thoughts made better with AI ✨")
 
 with st.container():
-   st.markdown("Improve your thoughts, messages, and emails by 10X with OpenAI. \n\n Made by [Prithvi](https://twitter.com/iprithvitharun).")
+   st.markdown("Fix typos, grammar issues, improve sentence structure to make your messages more readable and understandable. \n\n Made with OpenAI and LangChain by **Prithvi**.")
 
 st.markdown("## Your message")
 
 def get_api_key():
-    input_text = st.text_input(label="OpenAI API key ", placeholder="sk-XXXXXXXXXXXXXXXXXXX", key="openai_api_key_input")
+    input_text = st.text_input(label="OpenAI API key", type="password", placeholder="sk-XXXXXXXXXXXXXXXXXXX", key="openai_api_key_input")
     return input_text
 
 openai_api_key = get_api_key()
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 with col1:
     option_tone = st.selectbox(
         'Select the tone you want the message to be?',
         ('Formal', 'Casual', 'Sad', 'Funny'))
 
 with col2:
-    option_jobs = st.selectbox(
+    option_character = st.selectbox(
         'Character',
-        ('Product Manager', 'UX Writer', 'Designer', 'Developer', 'Law officer'))
-
-with col3:
-    option_dialect = st.selectbox(
-        'Dialect',
-        ('American English', 'British English'))                        
+        ('Product Manager', 'UX Writer', 'Designer', 'Developer', 'Law officer'))                   
 
 def get_text():
     input_text = st.text_area(label="Your thoughts", label_visibility='visible', placeholder='Enter your thoughts here.', key="email_input")
@@ -89,7 +91,7 @@ if email_input:
 
     llm = load_LLM(openai_api_key=openai_api_key)
 
-    prompt_with_email = prompt.format(tone=option_tone, jobs=option_jobs, dialect=option_dialect, email=email_input)
+    prompt_with_email = prompt.format(tone=option_tone, character=option_character, email=email_input)
     
     formatted_email = llm(prompt_with_email)
 
