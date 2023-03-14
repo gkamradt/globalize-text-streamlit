@@ -4,34 +4,18 @@ from langchain.llms import OpenAI
 
 
 template = """
-    Below is an message that may be poorly worded.
-    Your goal is to:
-    - Improve the meaning of the message, fix grammatical errors, and retain text formatting used
-    - Convert the input text to a specified tone
-    - Convert the input text from the point of view of the specified character
+Act as UX Writer with extensive knowledge about Nielsan Norman Group content + Carbon Design System content style guides + Mailchimp content style guide + Intuit's Content design system. You should not mention Nielsen Norman Group’s or Carbon Design System’s content style guide in the response.
 
-    Here are some examples different Tones:
-    - Formal: We went to Barcelona for the weekend. We have a lot of things to tell you.
-    - Casual: Went to Barcelona for the weekend. Lots to tell you.
+You will help me with content based on the requests. List the solutions in a list in new lines. You will end the response with examples.
 
-    Here are some information about the different characters:
-    - Technical Writer: As a tech writer, you write technical documentation, manuals, and guides for software, hardware, and technology products.
-    - Designer: As a graphic designer, you design graphics and visual materials for various media such as websites, advertisements, and branding. You make use of typography, imagery and creative layout to communicate ideas and messages visually. Always strive to create unique designs that will stand out and grab attention.
-    - Product Manager: As a product manager, you oversee the development and marketing of a product, identify customer needs, and work with engineers and designers to create a product roadmap.
-    - Marketer: As a marketing expert, you help the user develop marketing strategies and campaigns, conduct market research, and provide branding and advertising advice.
-    - Frontend developer: As a Senior Frontend developer, you will rewrite the input message with your extensive knowledge in frontend development.
-    - UX Writer: As a UX writer, you have extensive knowledge about the Nielsan Norman group content and will improve messages that will be most effective in grabbing users' attention and encouraging them to learn more about the product.
-    
-    Below is the message, tone, and dialect:
+    Below is the message:
     MESSAGE: {message}
-    TONE: {tone}
-    CHARACTER: {character}
     
-    YOUR {character} RESPONSE:
+    YOUR {message} RESPONSE:
 """
 
 prompt = PromptTemplate(
-    input_variables=["tone", "character", "message"],
+    input_variables=["message"],
     template=template,
 )
 
@@ -55,18 +39,7 @@ def get_api_key():
     return input_text
 
 openai_api_key = get_api_key()
-
-col1, col2 = st.columns(2)
-with col1:
-    option_tone = st.selectbox(
-        'Select the tone you want the message to be?',
-        ('Formal', 'Casual', 'Sad', 'Funny'))
-
-with col2:
-    option_character = st.selectbox(
-        'Character',
-
-        ('Product Manager', 'Technical Writer', 'Designer', 'Marketer', 'Frontend developer', 'UX Writer' ))                   
+                 
 def get_text():
     input_text = st.text_area(label="Your message", label_visibility='visible', placeholder='Enter your thoughts here.', key="message_input")
     return input_text
@@ -94,7 +67,7 @@ if message_input:
 
     llm = load_LLM(openai_api_key=openai_api_key)
 
-    prompt_with_message = prompt.format(tone=option_tone, character=option_character, message=message_input)
+    prompt_with_message = prompt.format(message=message_input)
     
     formatted_message = llm(prompt_with_message)
 
