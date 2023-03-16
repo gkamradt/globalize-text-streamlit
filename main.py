@@ -27,21 +27,14 @@ def load_LLM(openai_api_key):
 
 st.set_page_config(page_title='Better Grammar Ally', layout="wide", page_icon='✍️')
 
-st.markdown("# Thoughts made better with AI ✨")
-
-with st.container():
-   st.markdown("Fix typos, grammar issues, improve sentence structure to make your messages more readable and understandable. \n\n Made with OpenAI and LangChain by **Prithvi**.")
-
-st.markdown("## Your message")
-
 def get_api_key():
-    input_text = st.text_input(label="OpenAI API key", type="password", placeholder="sk-XXXXXXXXXXXXXXXXXXX", key="openai_api_key_input")
+    input_text = st.text_input(label="Your OpenAI API key", type="password", placeholder="sk-XXXXXXXXXXXXXXXXXXX", key="openai_api_key_input")
     return input_text
 
 openai_api_key = get_api_key()
                  
 def get_text():
-    input_text = st.text_area(label="Your message", label_visibility='visible', placeholder='Enter your thoughts here.', key="message_input")
+    input_text = st.text_area(label="What do you need?", label_visibility='visible', placeholder='Ask and you shall receive.', key="message_input")
     return input_text
 
 message_input = get_text()
