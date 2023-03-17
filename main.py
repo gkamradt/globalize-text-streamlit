@@ -6,7 +6,7 @@ from langchain.llms import OpenAI
 template = """
 Act as UX Writer with extensive knowledge about Nielsan Norman Group content + Carbon Design System content style guides + Mailchimp content style guide + Intuit's Content design system. You should not mention Nielsen Norman Group’s or Carbon Design System’s content style guide in the response.
 
-You will help me with content based on the requests. List the solutions in a list in new lines. You will end the response with examples.
+You will help me with multiple examples based on the requests. You will list the examples in a list.
 
     Below is the message:
     MESSAGE: {message}
@@ -25,7 +25,7 @@ def load_LLM(openai_api_key):
     llm = OpenAI(temperature=.7, openai_api_key=openai_api_key)
     return llm
 
-st.set_page_config(page_title='Better Grammar Ally', layout="wide", page_icon='✍️')
+st.set_page_config(page_title='AI placeholder text generator', layout="wide", page_icon='✍️')
 
 def get_api_key():
     input_text = st.text_input(label="Your OpenAI API key", type="password", placeholder="sk-XXXXXXXXXXXXXXXXXXX", key="openai_api_key_input")
@@ -39,10 +39,16 @@ def get_text():
 
 message_input = get_text()
 
-
-if len(message_input.split(" ")) > 700:
-    st.write("The maximum length is 700 words.")
+if len(message_input.split(" ")) < 2:
+    st.write("Try explaining a bit more.")
     st.stop()
+
+
+if len(message_input.split(" ")) > 100:
+    st.write("Make sure your word count is less than 100 and try again.")
+    st.stop()
+
+
 
 
 # def update_text_with_example():
@@ -51,7 +57,7 @@ if len(message_input.split(" ")) > 700:
 
 # st.button("*See An Example*", type='secondary', help="Click to see an example of the email you will be converting.", on_click=update_text_with_example)
 
-st.markdown("### Improved message:")
+st.markdown("### Examples:")
 
 if message_input:
     if not openai_api_key:
@@ -65,3 +71,5 @@ if message_input:
     formatted_message = llm(prompt_with_message)
 
     st.write(formatted_message)
+
+st.button('Try again', type="secondary")
